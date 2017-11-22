@@ -1,5 +1,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
+var luis = require('./controller/LuisDialog');
+// Some sections have been omitted
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -16,7 +18,14 @@ var connector = new builder.ChatConnector({
 // Listen for messages from users 
 server.post('/api/messages', connector.listen());
 
-// Receive messages from the user and respond by echoing each message back (prefixed with 'You said:')
+//var lastSaid = "";
+
+// Receive messages from the user
 var bot = new builder.UniversalBot(connector, function (session) {
-    session.send("You said: %s", session.message.text);
+    
+        session.send('Sorry, I did not understand \'%s\'. Type \'help\' if you need assistance.', session.message.text);
 });
+    
+// This line will call the function in your LuisDialog.js file
+luis.startDialog(bot);
+     
