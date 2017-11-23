@@ -1,9 +1,34 @@
 var rest = require("../API/RestClient");
 
 exports.displayFavouriteFood = function getFavouriteFood(session, username){
-    var url = 'https://foodbotmsa.azurewebsites.net/tables/FoodBot';
+    var url = 'http://msabotmichael.azurewebsites.net/tables/FoodBot';
     rest.getFavouriteFood(url, session, username, handleFavouriteFoodResponse)
 };
+
+exports.sendFavouriteFood = function postFavouriteFood(session, username, favouriteFood){
+    var url = 'http://msabotmichael.azurewebsites.net/tables/FoodBot';
+    rest.postFavouriteFood(url, username, favouriteFood);
+};
+
+exports.deleteFavouriteFood = function deleteFavouriteFood(session,username,favouriteFood){
+    var url  = 'http://msabotmichael.azurewebsites.net/tables/FoodBot';
+
+
+    rest.getFavouriteFood(url,session, username,function(message,session,username){
+        var allFoods = JSON.parse(message);
+        for(var i in allFoods) {
+            if (allFoods[i].favouriteFood === favouriteFood && allFoods[i].username === username) {
+                console.log(allFoods[i]);
+                rest.deleteFavouriteFood(url,session,username,favouriteFood, allFoods[i].id ,handleDeletedFoodResponse)
+            }
+        }
+    });
+
+};
+
+function handleDeletedFoodResponse(body, session, username, favouriteFood){
+    console.log("Done");
+}
 
 function handleFavouriteFoodResponse(message, session, username) {
     var favouriteFoodResponse = JSON.parse(message);
