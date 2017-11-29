@@ -3,6 +3,8 @@ var food = require('./FavouriteFoods');
 // Some sections have been omitted
 var restaurant = require('./RestaurantCard');
 var nutrition = require('./nutritionCard');
+//var customVision = require('./CognitiveDialog');
+//var qna = require('./QnAMaker');
 
 exports.startDialog = function (bot) {
     // Replace {YOUR_APP_ID_HERE} and {YOUR_KEY_HERE} with your LUIS app ID and your LUIS key, respectively.
@@ -114,7 +116,7 @@ exports.startDialog = function (bot) {
             }
         },
         function (session, results,next) {
-        //if (!isAttachment(session)) {
+        if (!isAttachment(session)) {
             if (results.response){
                 session.conversationData["username"] = result.response;
             }
@@ -130,7 +132,7 @@ exports.startDialog = function (bot) {
             } else {
                 session.send("No food identified! Please try again");
             }
-        //}  
+        }  
 
         }]).triggerAction({
             matches: 'DeleteFavourite'
@@ -141,4 +143,29 @@ exports.startDialog = function (bot) {
          }).triggerAction({
              matches: 'AddUsername'
          });
+
+         bot.dialog('QnA', [
+            function (session, args, next) {
+                session.dialogData.args = args || {};
+                builder.Prompts.text(session, "What is your question?");
+            },
+            function (session, results, next) {
+                qna.talkToQnA(session, results.response);
+            }
+        ]).triggerAction({
+            matches: 'QnA'
+        });
+}
+
+function isAttachment(session) { 
+    var msg = session.message.text;
+    if ((session.message.attachments && session.message.attachments.length > 0) || msg.includes("http")) {
+        //call custom vision
+        customVision.retreiveMessage(session);
+
+        return true;
+    }
+    else {
+        return false;
+    }
 }

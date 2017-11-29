@@ -5,28 +5,28 @@ exports.displayFavouriteFood = function getFavouriteFood(session, username){
     rest.getFavouriteFood(url, session, username, handleFavouriteFoodResponse)
 };
 
-exports.sendFavouriteFood = function postFavouriteFood(session, username, favouriteFood){
+exports.sendFavouriteFood = function postFavouriteFood(session, username, favouritefood){
     var url = 'http://msabotmichael.azurewebsites.net/tables/FoodBot';
-    rest.postFavouriteFood(url, username, favouriteFood);
+    rest.postFavouriteFood(url, username, favouritefood);
 };
 
-exports.deleteFavouriteFood = function deleteFavouriteFood(session,username,favouriteFood){
+exports.deleteFavouriteFood = function deleteFavouriteFood(session,username,favouritefood){
     var url  = 'http://msabotmichael.azurewebsites.net/tables/FoodBot';
 
 
     rest.getFavouriteFood(url,session, username,function(message,session,username){
         var allFoods = JSON.parse(message);
         for(var i in allFoods) {
-            if (allFoods[i].favouriteFood === favouriteFood && allFoods[i].username === username) {
+            if (allFoods[i].favouritefood === favouritefood && allFoods[i].username === username) {
                 console.log(allFoods[i]);
-                rest.deleteFavouriteFood(url,session,username,favouriteFood, allFoods[i].id ,handleDeletedFoodResponse)
+                rest.deleteFavouriteFood(url,session,username,favouritefood, allFoods[i].id ,handleDeletedFoodResponse)
             }
         }
     });
 
 };
 
-function handleDeletedFoodResponse(body, session, username, favouriteFood){
+function handleDeletedFoodResponse(body, session, username, favouritefood){
     console.log("Done");
 }
 
@@ -35,7 +35,7 @@ function handleFavouriteFoodResponse(message, session, username) {
     var allFoods = [];
     for (var index in favouriteFoodResponse) {
         var usernameReceived = favouriteFoodResponse[index].username;
-        var favouriteFood = favouriteFoodResponse[index].favouriteFood;
+        var favouriteFood = favouriteFoodResponse[index].favouritefood;
 
         //Convert to lower case whilst doing comparison to ensure the user can type whatever they like
         if (username.toLowerCase() === usernameReceived.toLowerCase()) {

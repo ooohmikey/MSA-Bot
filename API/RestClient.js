@@ -70,14 +70,37 @@ exports.getYelpData = function getData(url,bearer,session, callback){
         });
     };
 
-    exports.getNutritionData = function getData(url, session, foodName, callback){
-        
-            request.get(url, function(err,res,body){
-                if(err){
-                    console.log(err);
-                }
-                else {
-                    callback(body, foodName, session);
-                }
-            });
+exports.getNutritionData = function getData(url, session, foodName, callback){
+    
+        request.get(url, function(err,res,body){
+            if(err){
+                console.log(err);
+            }
+            else {
+                callback(body, foodName, session);
+            }
+        });
+    };
+
+exports.postQnAResults = function getData(url, session, question, callback){
+    var options = {
+        url: url,
+        method: 'POST',
+        headers: {
+            'Ocp-Apim-Subscription-Key': '69cb65e425224113b3f9765b5f743f5c',
+            'Content-Type':'application/json'
+        },
+        json: {
+            "question" : question
+        }
         };
+    
+        request(options, function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+            callback(body, session, question);
+        }
+        else{
+            console.log(error);
+        }
+        });
+    };
